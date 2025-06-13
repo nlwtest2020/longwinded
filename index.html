@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Longwinded Whatever</title>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <header>
     <div class="container">
       <h1 class="logo">Longwinded Whatever</h1>
-      <p class="tagline">Neighborhood news so specific, it's only interesting to us!</p>
+      <p class="tagline">Parody dispatches from Minneapolis' Longfellow neighborhood.</p>
       <nav>
         <ul>
           <li><a href="#">Home</a></li>
@@ -36,6 +37,7 @@
       const res = await fetch('/.netlify/functions/generateStory');
       const data = await res.json();
       document.getElementById('story').innerHTML = `
+        <img src="${data.image_url}" alt="${data.title}" class="story-image">
         <h2>${data.title}</h2>
         <p class="date">${data.date}</p>
         <p>${data.content}</p>
