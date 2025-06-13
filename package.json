@@ -2,6 +2,6 @@
   "name": "longwinded-whatever-site",
   "version": "1.0.0",
   "dependencies": {
-    "node-fetch": "^2.6.1"
+    "openai": "^4.12.0"
   }
 }
