@@ -1,11 +1,11 @@
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
-  // External API call
-  const apiUrl = process.env.MY_STORY_API_URL;
-  const apiKey = process.env.MY_STORY_API_KEY;
-  let storyData;
+  // 1) Call your external story API directly
+  const apiUrl = 'https://api.yoursite.com/v1/story';        // ← your endpoint
+  const apiKey = 'YOUR_ACTUAL_API_KEY';                      // ← your key
 
+  let storyData;
   try {
     const resp = await fetch(apiUrl, {
       method: 'POST',
@@ -27,7 +27,7 @@ exports.handler = async function(event, context) {
     };
   }
 
-  // Unsplash image
+  // 2) Still fetch an image
   const image_url = `https://source.unsplash.com/720x400/?Longfellow,Minneapolis,neighborhood&${Date.now()}`;
 
   return {
