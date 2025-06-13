@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Longwinded Whatever</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1 class="logo">Longwinded Whatever</h1>
+      <p class="tagline">Neighborhood news so specific, it's only interesting to us!</p>
+      <nav>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Beanie</a></li>
+          <li><a href="#">Log in</a></li>
+          <li><a href="#">Membership</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <div class="container">
+      <button id="new-story">Generate Story</button>
+      <article id="story">
+        <!-- Story will be injected here -->
+      </article>
+    </div>
+  </main>
+  <script>
+    async function fetchStory() {
+      const res = await fetch('/.netlify/functions/generateStory');
+      const data = await res.json();
+      document.getElementById('story').innerHTML = `
+        <h2>${data.title}</h2>
+        <p class="date">${data.date}</p>
+        <p>${data.content}</p>
+      `;
+    }
+    document.getElementById('new-story').addEventListener('click', fetchStory);
+    window.onload = fetchStory;
+  </script>
+</body>
+</html>
