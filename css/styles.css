@@ -1,0 +1,56 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #fdfdfd;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+header {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 1rem 0;
+}
+.logo {
+  font-size: 2rem;
+  margin: 0;
+}
+.tagline {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.25rem 0;
+}
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+nav li {
+  margin-right: 1rem;
+}
+nav a {
+  text-decoration: none;
+  color: #0077cc;
+}
+#new-story {
+  background: #0077cc;
+  border: none;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+#story h2 {
+  margin-top: 0;
+}
+.date {
+  font-size: 0.8rem;
+  color: #999;
+  margin: 0.5rem 0;
+}
