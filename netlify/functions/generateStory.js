@@ -1,42 +1,27 @@
-const fetch = require('node-fetch');
-
 exports.handler = async function(event, context) {
-  // 1) Call your external story API directly
-  const apiUrl = 'https://api.yoursite.com/v1/story';        // ← your endpoint
-  const apiKey = 'YOUR_ACTUAL_API_KEY';                      // ← your key
+  const streetNames = [
+    'Minnehaha Avenue', 'Lake Street', '22nd Avenue',
+    'Hiawatha Boulevard', '28th Avenue'
+  ];
+  const events = [
+    'a painted rock hiding spot was discovered',
+    'a squirrel hoarded three acorns simultaneously',
+    'the community garden hosted a tomato tasting event',
+    'someone set up a free little library outside',
+    'a neighbor cleaned their gutters'
+  ];
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const title   = `${pick(streetNames)} Update: ${pick(events)}`;
+  const date    = new Date().toLocaleDateString('en-US', {
+                  month: 'long', day: 'numeric', year: 'numeric'
+                });
+  const content = `In the Longfellow neighborhood, ${pick(events)} on ${pick(streetNames)}. Neighbors are calling it the dullest highlight of their week.`;
 
-  let storyData;
-  try {
-    const resp = await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        prompt: 'Write me a boring Longfellow neighborhood story in 200 words.'
-      })
-    });
-    storyData = await resp.json();
-  } catch (err) {
-    console.error('API error', err);
-    storyData = {
-      title: 'Fallback Title',
-      date: new Date().toLocaleDateString('en-US'),
-      content: 'Could not reach external API; here’s a fallback story.'
-    };
-  }
-
-  // 2) Still fetch an image
+  // Unsplash “API” for images
   const image_url = `https://source.unsplash.com/720x400/?Longfellow,Minneapolis,neighborhood&${Date.now()}`;
 
   return {
     statusCode: 200,
-    body: JSON.stringify({
-      title: storyData.title,
-      date: storyData.date || new Date().toLocaleDateString('en-US'),
-      content: storyData.content,
-      image_url
-    })
+    body: JSON.stringify({ title, date, content, image_url })
   };
 };
