@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Know Your Role</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2em;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 1s ease;
+        }
+
+        .score-area {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .score-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .score-box:hover {
+            transform: translateY(-2px);
+        }
+
+        .question-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .spectrum-container {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 20px 0;
+        }
+
+        .spectrum-line {
+            height: 8px;
+            background: linear-gradient(90deg, #3498db 0%, #9b59b6 50%, #e74c3c 100%);
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .role-zones {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .role-zone {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            margin: 0 10px;
+            border-radius: 15px;
+            border: 3px dashed transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .role-zone.ac {
+            background: rgba(52, 152, 219, 0.1);
+            border-color: #3498db;
+        }
+
+        .role-zone.both {
+            background: rgba(155, 89, 182, 0.1);
+            border-color: #9b59b6;
+        }
+
+        .role-zone.supervisor {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: #e74c3c;
+        }
+
+        .role-zone.both-mentor {
+            background: rgba(241, 196, 15, 0.1);
+            border-color: #f1c40f;
+        }
+
+        .role-zone.mentor {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: #2ecc71;
+        }
+
+        .role-zone:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .role-zone.correct {
+            animation: correctPulse 0.6s ease;
+            background: rgba(46, 204, 113, 0.3);
+        }
+
+        .role-zone.wrong {
+            animation: shake 0.5s ease;
+            background: rgba(231, 76, 60, 0.3);
+        }
+
+        .role-label {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-right: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            display: none;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .task-list {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .task-list h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .task-category {
+            margin-bottom: 25px;
+        }
+
+        .task-category h4 {
+            color: #34495e;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 5px solid;
+        }
+
+        .task-category.ac h4 { border-left-color: #3498db; }
+        .task-category.both h4 { border-left-color: #9b59b6; }
+        .task-category.supervisor h4 { border-left-color: #e74c3c; }
+        .task-category.both-mentor h4 { border-left-color: #f1c40f; }
+        .task-category.mentor h4 { border-left-color: #2ecc71; }
+
+        .task-item {
+            padding: 8px 15px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+            border: 2px solid #2ecc71;
+        }
+
+        .feedback.wrong {
+            background: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+            border: 2px solid #e74c3c;
+        }
+
+        .game-complete {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .final-score {
+            font-size: 3em;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 768px) {
+            .role-zones {
+                flex-direction: column;
+            }
+            
+            .role-zone {
+                margin: 10px 0;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Know Your Role</h1>
+            <p class="subtitle">Match responsibilities to the correct role on the spectrum</p>
+        </div>
+
+        <div class="game-area">
+            <div class="score-area">
+                <div class="score-box">
+                    Question: <span id="currentQuestion">1</span> / <span id="totalQuestions">39</span>
+                </div>
+                <div class="score-box">
+                    Score: <span id="score">0</span> / <span id="totalScore">39</span>
+                </div>
+                <div class="score-box">
+                    Streak: <span id="streak">0</span> 🔥
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-text" id="questionText">
+                    Loading question...
+                </div>
+
+                <div class="spectrum-container">
+                    <div class="spectrum-line"></div>
+                    <div class="role-zones">
+                        <div class="role-zone ac" data-role="ac">
+                            <div class="role-label">Alumni Coordinator</div>
+                        </div>
+                        <div class="role-zone both" data-role="both">
+                            <div class="role-label">AC & Supervisor</div>
+                        </div>
+                        <div class="role-zone supervisor" data-role="supervisor">
+                            <div class="role-label">Supervisor</div>
+                        </div>
+                        <div class="role-zone both-mentor" data-role="both-mentor">
+                            <div class="role-label">Supervisor & Mentor</div>
+                        </div>
+                        <div class="role-zone mentor" data-role="mentor">
+                            <div class="role-label">Mentor</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback" id="feedback"></div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-submit" id="submitBtn">Submit Answer</button>
+                    <button class="btn btn-next" id="nextBtn">Next Question →</button>
+                </div>
+            </div>
+
+            <div class="task-list" id="taskList">
+                <h3>📋 Completed Tasks</h3>
+                <div id="taskCategories"></div>
+            </div>
+
+            <div class="game-complete" id="gameComplete">
+                <h2>🎉 Congratulations! Game Complete!</h2>
+                <div class="final-score">Final Score: <span id="finalScore">0</span>/39</div>
+                <p>You've successfully categorized all responsibilities!</p>
+                <button class="btn btn-restart" onclick="location.reload()">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tasks = [
+            { id: 1, text: "Developing country-specific annual and monthly plans and budgets for alumni activities", role: "ac" },
+            { id: 2, text: "Providing coordination, support, and encouragement to alumni as they plan and execute alumni activities", role: "ac" },
+            { id: 3, text: "Providing guidance to alumni working on grant funding proposals", role: "ac" },
+            { id: 4, text: "Developing, overseeing and supporting a network of volunteer alumni City and University Representatives", role: "ac" },
+            { id: 5, text: "Coordinating and leading re-entry seminars for newly returned alumni", role: "ac" },
+            { id: 6, text: "Managing, tracking, and reporting on alumni activities and success stories", role: "ac" },
+            { id: 7, text: "Managing the Alumni Coordinator's budget. Requesting budget for approval, tracking, and reporting on spending, and handling funds in compliance with local finance and SSAP reporting procedures", role: "ac" },
+            { id: 8, text: "Sharing relevant communications with all alumni in the country", role: "ac" },
+            { id: 9, text: "Actively promoting upcoming activities and opportunities to alumni", role: "ac" },
+            { id: 10, text: "Following guidelines, sharing posts on local FLEX/YES alumni social media accounts", role: "ac" },
+            { id: 11, text: "Representing the alumni community at relevant meetings and events", role: "ac" },
+            { id: 12, text: "Maintaining up-to-date alumni contact information in the AIS database", role: "ac" },
+            { id: 13, text: "Organizing monthly alumni activities and actively working to increase alumni engagement", role: "ac" },
+            { id: 14, text: "Facilitating alumni engagement with other U.S. Government exchange alumni", role: "ac" },
+            { id: 15, text: "Liaising and communicating with the U.S. Embassy contacts and other local or potential partners", role: "both" },
+            { id: 16, text: "Sharing highlights about alumni activities and successes with colleagues at American Councils and the U.S. Embassy", role: "both" },
+            { id: 17, text: "Participating in some alumni or CR/UR activities throughout the year, when it is deemed valuable and possible to do so", role: "both" },
+            { id: 18, text: "Planning the re-entry budget", role: "both" },
+            { id: 19, text: "Approving local events, understanding expectations for reporting and reading reports that Alumni Coordinators submit", role: "supervisor" },
+            { id: 20, text: "Reviewing social media content before it's shared on local FLEX/YES alumni pages and ensuring it meets the guidelines", role: "supervisor" },
+            { id: 21, text: "Discussing any concerns raised by the Alumni Programs Team regarding AC performance", role: "supervisor" },
+            { id: 22, text: "Having weekly check-in meetings with the Alumni Coordinator", role: "supervisor" },
+            { id: 23, text: "Introducing the AC to appropriate Embassy contacts and other potential local partners", role: "supervisor" },
+            { id: 24, text: "Training (or asking the local finance person) to train the AC in country-specific finance procedures", role: "supervisor" },
+            { id: 25, text: "Helping to develop, reviewing, and, ultimately, approving the annual and monthly plans and budgets", role: "supervisor" },
+            { id: 26, text: "Submitting the approved amount of money to the country's budget request for the following month", role: "supervisor" },
+            { id: 27, text: "Offering support, as needed, in planning and preparing the re-entry seminar and CR/UR training and attending these events", role: "supervisor" },
+            { id: 28, text: "Allowing the Alumni Coordinator to focus only on alumni programming; making sure that ACs aren't asked to do tasks beyond their job description", role: "supervisor" },
+            { id: 34, text: "Helping the Alumni Coordinator to set, track, and achieve goals for personal growth and professional accomplishments", role: "both-mentor" },
+            { id: 35, text: "Helping the Alumni Coordinator stay motivated and passionate", role: "both-mentor" },
+            { id: 36, text: "Praising the AC's accomplishments and providing constructive feedback", role: "both-mentor" },
+            { id: 37, text: "Answering work- or career-related questions and offering advice", role: "both-mentor" },
+            { id: 38, text: "Helping to create a friendly, welcoming atmosphere for the AC", role: "both-mentor" },
+            { id: 39, text: "Providing strategies and support in connecting with senior alumni", role: "both-mentor" },
+            { id: 29, text: "Help brainstorm ideas, provide examples from other countries, and, ultimately, review and approve the annual plan for alumni activities at the beginning of AC term", role: "mentor" },
+            { id: 30, text: "Meeting monthly with their group of Alumni Coordinators and offering feedback and guidance", role: "mentor" },
+            { id: 31, text: "Providing the AC and Supervisor with information and resources, connecting them with other colleagues in the organization, as needed", role: "mentor" },
+            { id: 32, text: "Answering any questions ACs and Supervisors may have about duties and alumni programming", role: "mentor" },
+            { id: 33, text: "Providing information and reminders about global/regional alumni opportunities and upcoming deadlines", role: "mentor" }
+        ];
+
+        // Shuffle array
+        function shuffle(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Game state
+        let shuffledTasks = shuffle(tasks);
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let selectedRole = null;
+        let completedTasks = {
+            ac: [],
+            both: [],
+            supervisor: [],
+            'both-mentor': [],
+            mentor: []
+        };
+
+        // Initialize game
+        function init() {
+            loadQuestion();
+            setupEventListeners();
+            updateTaskList();
+        }
+
+        function setupEventListeners() {
+            // Role zone selection
+            document.querySelectorAll('.role-zone').forEach(zone => {
+                zone.addEventListener('click', function() {
+                    document.querySelectorAll('.role-zone').forEach(z => {
+                        z.style.background = z.classList[1] === 'ac' ? 'rgba(52, 152, 219, 0.1)' :
+                                            z.classList[1] === 'both' ? 'rgba(155, 89, 182, 0.1)' :
+                                            z.classList[1] === 'supervisor' ? 'rgba(231, 76, 60, 0.1)' :
+                                            z.classList[1] === 'both-mentor' ? 'rgba(241, 196, 15, 0.1)' :
+                                            'rgba(46, 204, 113, 0.1)';
+                    });
+                    this.style.background = this.classList[1] === 'ac' ? 'rgba(52, 152, 219, 0.3)' :
+                                           this.classList[1] === 'both' ? 'rgba(155, 89, 182, 0.3)' :
+                                           this.classList[1] === 'supervisor' ? 'rgba(231, 76, 60, 0.3)' :
+                                           this.classList[1] === 'both-mentor' ? 'rgba(241, 196, 15, 0.3)' :
+                                           'rgba(46, 204, 113, 0.3)';
+                    selectedRole = this.dataset.role;
+                });
+            });
+
+            // Submit button
+            document.getElementById('submitBtn').addEventListener('click', checkAnswer);
+            
+            // Next button
+            document.getElementById('nextBtn').addEventListener('click', nextQuestion);
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= shuffledTasks.length) {
+                showGameComplete();
+                return;
+            }
+
+            const question = shuffledTasks[currentQuestionIndex];
+            document.getElementById('questionText').textContent = question.text;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            
+            // Reset selection
+            selectedRole = null;
+            document.querySelectorAll('.role-zone').forEach(zone => {
+                zone.classList.remove('correct', 'wrong');
+                zone.style.background = zone.classList[1] === 'ac' ? 'rgba(52, 152, 219, 0.1)' :
+                                       zone.classList[1] === 'both' ? 'rgba(155, 89, 182, 0.1)' :
+                                       zone.classList[1] === 'supervisor' ? 'rgba(231, 76, 60, 0.1)' :
+                                       zone.classList[1] === 'both-mentor' ? 'rgba(241, 196, 15, 0.1)' :
+                                       'rgba(46, 204, 113, 0.1)';
+            });
+            
+            // Hide feedback and show submit button
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'inline-block';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function checkAnswer() {
+            if (!selectedRole) {
+                alert('Please select a role before submitting!');
+                return;
+            }
+
+            const question = shuffledTasks[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            const selectedZone = document.querySelector(`[data-role="${selectedRole}"]`);
+            
+            if (selectedRole === question.role) {
+                // Correct answer
+                score++;
+                streak++;
+                selectedZone.classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.textContent = '✅ Correct! Well done!';
+                completedTasks[question.role].push(question.text);
+            } else {
+                // Wrong answer
+                streak = 0;
+                selectedZone.classList.add('wrong');
+                const correctZone = document.querySelector(`[data-role="${question.role}"]`);
+                correctZone.classList.add('correct');
+                feedback.className = 'feedback wrong';
+                const roleNames = {
+                    'ac': 'Alumni Coordinator',
+                    'both': 'Alumni Coordinator & Supervisor',
+                    'supervisor': 'Supervisor',
+                    'both-mentor': 'Supervisor & Mentor',
+                    'mentor': 'Mentor'
+                };
+                feedback.textContent = `❌ Incorrect. The correct answer is: ${roleNames[question.role]}`;
+                completedTasks[question.role].push(question.text);
+            }
+            
+            // Update scores
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+            
+            // Show feedback and next button
+            feedback.style.display = 'block';
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            // Update task list
+            updateTaskList();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function updateTaskList() {
+            const categoriesDiv = document.getElementById('taskCategories');
+            categoriesDiv.innerHTML = '';
+            
+            const roleNames = {
+                'ac': 'Alumni Coordinator',
+                'both': 'Alumni Coordinator & Supervisor',
+                'supervisor': 'Supervisor',
+                'both-mentor': 'Supervisor & Mentor',
+                'mentor': 'Mentor'
+            };
+            
+            for (const [role, tasks] of Object.entries(completedTasks)) {
+                if (tasks.length > 0) {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = `task-category ${role}`;
+                    
+                    const headerDiv = document.createElement('h4');
+                    headerDiv.textContent = `${roleNames[role]} (${tasks.length})`;
+                    categoryDiv.appendChild(headerDiv);
+                    
+                    tasks.forEach(task => {
+                        const taskDiv = document.createElement('div');
+                        taskDiv.className = 'task-item';
+                        taskDiv.textContent = task;
+                        categoryDiv.appendChild(taskDiv);
+                    });
+                    
+                    categoriesDiv.appendChild(categoryDiv);
+                }
+            }
+        }
+
+        function showGameComplete() {
+            document.querySelector('.question-card').style.display = 'none';
+            document.getElementById('gameComplete').style.display = 'block';
+            document.getElementById('finalScore').textContent = score;
+        }
+
+        // Start the game
+        init();
+    </script>
+</body>
+</html>
