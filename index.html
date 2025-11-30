@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Longwinded Whatever</title>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans&display=swap" rel="stylesheet" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -30,21 +36,141 @@
       <article id="story">
         <!-- Story will be injected here -->
       </article>
+      <section class="journey" aria-labelledby="journey-heading">
+        <h2 id="journey-heading">Tracing the Coburg to Bibra March</h2>
+        <p class="journey-intro">
+          Follow the narrator's route from the Thuringian Forest toward Bibra, weaving past Coburg,
+          Ebern, Forchheim, and Nuremberg while skirting the prying eyes of Bamberg.
+        </p>
+        <div id="map" role="presentation" aria-label="Map of journey stops"></div>
+        <div class="journey-details">
+          <div class="journey-legend">
+            <p><span class="swatch swatch-start"></span> Starting outlook in the Thuringian Forest</p>
+            <p><span class="swatch swatch-route"></span> Main route between the Itz and the Main</p>
+            <p><span class="swatch swatch-finish"></span> Final goal near Bibra</p>
+          </div>
+          <ol id="journey-stops" class="journey-stops" aria-label="List of journey stops"></ol>
+        </div>
+      </section>
     </div>
   </main>
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
   <script>
     async function fetchStory() {
       const res = await fetch('/.netlify/functions/generateStory');
       const data = await res.json();
+      const imageBlock = data.image_url
+        ? `<img src="${data.image_url}" alt="${data.title}" class="story-image">`
+        : '';
       document.getElementById('story').innerHTML = `
-        <img src="${data.image_url}" alt="${data.title}" class="story-image">
+        ${imageBlock}
         <h2>${data.title}</h2>
         <p class="date">${data.date}</p>
         <p>${data.content}</p>
       `;
     }
+
+    function initJourneyMap() {
+      const journeyStops = [
+        {
+          name: 'Thuringian Forest outlook',
+          coords: [50.61, 10.92],
+          detail: "A luminous patch on the horizon as the march begins.",
+          timing: 'Dawn, day 1'
+        },
+        {
+          name: 'Veste Coburg fortress',
+          coords: [50.2675, 10.965],
+          detail: 'Fortress already behind him after a few hours on the road.',
+          timing: 'Morning, day 1'
+        },
+        {
+          name: 'Ebern inn',
+          coords: [50.0971, 10.7929],
+          detail: 'Evening halt in town along the wooded High Franconian valleys.',
+          timing: 'Nightfall, day 1'
+        },
+        {
+          name: 'Between the Itz and the Main',
+          coords: [49.9944, 10.7],
+          detail: 'Broad merchant road threading the valleys, normally crowded with carts.',
+          timing: 'Day 2'
+        },
+        {
+          name: 'Back road near Forchheim',
+          coords: [49.7189, 11.0583],
+          detail: 'Chosen to dodge Bamberg and its watchful eyes.',
+          timing: 'Evening, day 2'
+        },
+        {
+          name: 'Nuremberg gate',
+          coords: [49.4521, 11.0767],
+          detail: 'Major waypoint before the final push north.',
+          timing: 'Morning, day 3'
+        },
+        {
+          name: 'Bibra',
+          coords: [50.3683, 10.3673],
+          detail: 'Destination on the edge of Thuringia.',
+          timing: 'End of day 3'
+        }
+      ];
+
+      const map = L.map('map', { scrollWheelZoom: false });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      const routeLine = L.polyline(journeyStops.map((stop) => stop.coords), {
+        color: '#1a73e8',
+        weight: 4,
+        opacity: 0.9
+      }).addTo(map);
+
+      map.fitBounds(routeLine.getBounds(), { padding: [24, 24] });
+
+      journeyStops.forEach((stop, index) => {
+        const marker = L.circleMarker(stop.coords, {
+          radius: 7,
+          color: index === 0 ? '#c0392b' : index === journeyStops.length - 1 ? '#2e7d32' : '#1a73e8',
+          fillColor: index === 0 ? '#e67e22' : index === journeyStops.length - 1 ? '#43a047' : '#1a73e8',
+          fillOpacity: 0.9,
+          weight: 2
+        }).addTo(map);
+
+        marker.bindPopup(
+          `<strong>${index + 1}. ${stop.name}</strong><br>${stop.detail}<br><small>${stop.timing}</small>`
+        );
+      });
+
+      const list = document.getElementById('journey-stops');
+      list.innerHTML = journeyStops
+        .map(
+          (stop, index) => `
+            <li>
+              <div class="stop-header">
+                <span class="stop-number">${index + 1}</span>
+                <div>
+                  <strong>${stop.name}</strong>
+                  <div class="stop-timing">${stop.timing}</div>
+                </div>
+              </div>
+              <p>${stop.detail}</p>
+            </li>
+          `
+        )
+        .join('');
+    }
+
     document.getElementById('new-story').addEventListener('click', fetchStory);
-    window.onload = fetchStory;
+    window.onload = () => {
+      fetchStory();
+      initJourneyMap();
+    };
   </script>
 </body>
 </html>
